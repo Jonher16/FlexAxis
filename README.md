@@ -9,9 +9,7 @@ First commit. Simple button and keyboard functionalities in the frontend capable
 ## To Fix
 
 - Frontend style and archtiecture
-- Erase fields when pressing Apply
 - Add Video source
-- CORS
 
 ## Installation
 
