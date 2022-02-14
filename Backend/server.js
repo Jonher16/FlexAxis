@@ -17,8 +17,16 @@ const server = http.createServer((req, res) => {
   res.statusCode = 200;
   res.setHeader('Content-Type', 'text/plain');
   res.end('SocketIo Server');
+  
 });
-const io = socketIo(server);
+
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"]
+  }
+});
+
 var zoomstep = 100
 var angle = 20
 
@@ -35,7 +43,7 @@ io.on("connection", (socket) => {
     console.log(msg.password)
     axis = new Axis(msg.ip,msg.username,msg.password,{'camera':'1'});
     io.emit("welcome", `Axis camera credentials changed.`);
-    
+
   });
   
   socket.on("command", (command) => {
