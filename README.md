@@ -1,23 +1,31 @@
-# FlexDrone
+# FlexAxis
 
-Bachellor's Thesis Project on Drone & Sensor management system.
+Web-based platform in order to control PTZ-compatible Axis Cameras using the NodeJS client for AxisPTZ API. It includes a frontend connected via Socket.io to a Backend which uses the NodeJS client to send requests to the Axis Camera via the official AxisPTZ API.
 
-## Drone support
+## State
 
-### Supported
-- DJI Ryze Tello
-### Planned to be supported
-- All drones supported by DJI Android SDK (Main focus on DJI Matrice 300 RTK)
+First commit. Simple button and keyboard functionalities in the frontend capable of sending commands via Socket.io to backend node server, which sends requests to the API and controls the camera
+
+## To Fix
+
+- Frontend style and archtiecture
+- Erase fields when pressing Apply
+- Add Video source
+- CORS
 
 ## Installation
 
 First, install dependencies in both frontend and backend.
 
 ```
-cd flexdrone
+cd flex-axis-ptz
 npm install
 cd Backend
 npm install
 ```
 
+## Credits
+
+Credits to hermajul, creator of the NodeJS client for AxisPTZ API.
+Source: https://github.com/hermajul/axis-ptz-camera
 
