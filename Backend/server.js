@@ -27,8 +27,18 @@ const io = require("socket.io")(server, {
   }
 });
 
+//Stream declarations
+
+Stream = require("node-rtsp-stream");
+
+//Variables
+
 var zoomstep = 100
 var angle = 20
+var ip = "127.0.0.1"
+var username = "root"
+var password = "root"
+
 
 //Socket.io Sockets
 
@@ -38,11 +48,38 @@ io.on("connection", (socket) => {
   io.emit("welcome", "Welcome, new user");
   
   socket.on("camera", (msg) => {
+    ip = msg.ip
+    username = msg.username
+    password = msg.password
+
     console.log(msg.ip)
     console.log(msg.username)
     console.log(msg.password)
+    console.log(`rtsp://${username}:${password}@${ip}/axis-media/media.amp`)
+
     axis = new Axis(msg.ip,msg.username,msg.password,{'camera':'1'});
     io.emit("welcome", `Axis camera credentials changed.`);
+
+    stream = new Stream({
+      name: "Stream",
+      // streamUrl: "rtsp://YOUR_IP:PORT",
+      streamUrl: `rtsp://${username}:${password}@${ip}/axis-media/media.amp`,
+      wsPort: 6789,
+      ffmpegOptions: { // options ffmpeg flags
+        "-f": "mpegts", // output file format.
+        "-codec:v": "mpeg1video", // video codec
+        "-b:v": "1000k", // video bit rate
+        "-stats": "",
+        "-r": 25, // frame rate
+        "-s": "640x480", // video size
+        "-bf": 0,
+        // audio
+        "-codec:a": "mp2", // audio codec
+        "-ar": 44100, // sampling rate (in Hz)(in Hz)
+        "-ac": 1, // number of audio channels
+        "-b:a": "128k", // audio bit rate
+      },
+    });
 
   });
   

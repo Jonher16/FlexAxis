@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "node-rtsp-stream": "^0.0.9",
     "dgram": "^1.0.1",
     "socket.io": "^4.4.0",
     "waait": "^1.0.5",

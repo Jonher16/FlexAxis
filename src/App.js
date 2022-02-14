@@ -7,11 +7,22 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { Form } from "react-bootstrap";
+import JSMpeg from "@cycjimmy/jsmpeg-player";
+
+const ffmpegIP = "localhost";
 
 const ENDPOINT = "http://127.0.0.1:4001";
 const socket = io(ENDPOINT);
 
 function App() {
+
+  useEffect(() => {
+    var videoUrl = `ws://${ffmpegIP}:6789/`;
+    var player = new JSMpeg.VideoElement("#video-canvas", videoUrl, {
+      autoplay: true,
+    });
+    console.log(player);
+  });
 
   const handleButton = (e, command) => {
     e.preventDefault();
