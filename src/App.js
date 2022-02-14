@@ -6,8 +6,6 @@ import HeaderNav from "./components/HeaderNav";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import DropdownButton from "react-bootstrap/DropdownButton";
-import Dropdown from "react-bootstrap/Dropdown";
 import { Form } from "react-bootstrap";
 
 const ENDPOINT = "http://127.0.0.1:4001";
@@ -29,6 +27,12 @@ function App() {
     e.preventDefault();
     setCamera(tempcamera);
     socket.emit("camera", tempcamera);
+    setTempCamera({
+      ip: "",
+      username: "",
+      password: "",
+    })
+    alert("Axis camera credentials changed successfuly")
   };
 
   const [camera, setCamera] = useState({ ip: "", username: "", password: "" });
