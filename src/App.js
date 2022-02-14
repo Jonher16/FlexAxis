@@ -33,6 +33,7 @@ function App() {
       password: "",
     })
     alert("Axis camera credentials changed successfuly")
+    setFlagCredentials(false)
   };
 
   const [camera, setCamera] = useState({ ip: "", username: "", password: "" });
@@ -41,6 +42,8 @@ function App() {
     username: "",
     password: "",
   });
+
+  const [flagCredentials, setFlagCredentials] = useState(true)
 
   var flagW = false;
   var flagA = false;
@@ -145,7 +148,8 @@ function App() {
     <>
       <div className="App">
         <HeaderNav />
-        <Form>
+        {flagCredentials ? 
+        <Form className="pt-5 pl-5 pr-5">
           <Form.Group className="mb-3" controlId="formBasicIP">
             <Form.Label>Camera IP address</Form.Label>
             <Form.Control
@@ -184,14 +188,15 @@ function App() {
             />
           </Form.Group>
 
-          <Button className="mt-3" onClick={(e) => handleSubmit(e)}>
+          <Button className="mt-2" onClick={(e) => handleSubmit(e)}>
             Apply Changes
           </Button>
-        </Form>
-        <Container className=" w-50 mt-5" fluid>
+        </Form> : <Button className="mt-5 ml-5" onClick={()=>setFlagCredentials(true)}>Edit Credentials</Button>
+        }
+        <Container className=" w-50 mt-1" fluid>
           {/* Zoom row*/}
           <Row
-            className="d-flex mt-3 justify-content-center w-3"
+            className="d-flex mt-1 justify-content-center w-3"
             xs="12"
             lg="6"
             md="6"
@@ -328,6 +333,7 @@ function App() {
             </Col>
           </Row>
         </Container>
+        <div id="video-canvas" style={{ height: "480px", width: "640px" }}></div>
       </div>
     </>
   );
