@@ -81,6 +81,13 @@ io.on("connection", (socket) => {
       },
     });
 
+    axis.ptz.rpan('50').then(async (res)=>{
+      console.log(res);   //true 
+      axis.ptz.reachPos().then((reached) => {
+          console.log(reached)  // true when reached
+      })
+  })
+
   });
   
   socket.on("command", (command) => {
@@ -134,6 +141,7 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     console.log("A user has disconnected")
+    stream = {}
   });
 
 
