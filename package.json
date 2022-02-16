@@ -1,7 +1,8 @@
 {
-  "name": "flexdrone",
+  "name": "FlexAxis",
   "version": "0.1.0",
   "private": true,
+  "homepage":".",
   "dependencies": {
     "@cycjimmy/jsmpeg-player": "^5.0.1",
     "@testing-library/jest-dom": "^5.15.1",
