@@ -22,7 +22,7 @@ function App() {
   };
 
   useEffect(() => {
-    socket.on("welcome", (msg) => console.log(msg));
+    socket.on("welcome", (msg) => console.log("From server => ",msg));
     socket.on("streamstatus", (status) => checkStreamStatus(status));
   }, []);
 

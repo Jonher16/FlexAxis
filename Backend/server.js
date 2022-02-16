@@ -120,6 +120,7 @@ io.on("connection", (socket) => {
     console.log("Stream closed.");
     stream.kill('SIGINT');
     flag_stream = false;
+    io.emit("welcome", "Stream closed.");
   });
 
   socket.on("command", (command) => {
