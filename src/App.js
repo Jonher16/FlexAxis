@@ -23,7 +23,18 @@ function App() {
 
   useEffect(() => {
     socket.on("welcome", (msg) => console.log(msg));
+    socket.on("streamstatus", (status) => checkStreamStatus(status));
   }, []);
+
+  function checkStreamStatus(status){
+    console.log(status)
+    if(status === true) {
+      setFlagCredentials(false)
+    }
+    else if(status === false) {
+      setFlagCredentials(true)
+    }
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -50,7 +61,7 @@ function App() {
   useEffect(() => {
     var tempflag = flagCredentials;
     if (flagCredentials === false) {
-      var videoUrl = `ws://${ffmpegIP}:6789/`;
+      var videoUrl = `ws://${ffmpegIP}:6789/stream`;
       var player = new JSMpeg.VideoElement("#video-canvas", videoUrl, {
         autoplay: true,
       });
