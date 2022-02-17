@@ -59,9 +59,8 @@ function App() {
   const [flagCredentials, setFlagCredentials] = useState(true);
 
   useEffect(() => {
-    var tempflag = flagCredentials;
     if (flagCredentials === false) {
-      var videoUrl = `ws://${ffmpegIP}:6789/stream`;
+      var videoUrl = `wss://${ffmpegIP}:6789/stream`;
       var player = new JSMpeg.VideoElement("#video-canvas", videoUrl, {
         autoplay: true,
       });
