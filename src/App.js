@@ -51,9 +51,9 @@ function App() {
 
   const [camera, setCamera] = useState({ ip: "", username: "", password: "" });
   const [tempcamera, setTempCamera] = useState({
-    ip: "212.170.116.46",
+    ip: "172.20.85.127",
     username: "root",
-    password: "pass",
+    password: "Nuuk2022",
   });
 
   const [flagCredentials, setFlagCredentials] = useState(true);

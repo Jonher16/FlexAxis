@@ -32,27 +32,31 @@ const spawn = require('child_process').spawn; //Packet to spawn ffmpeg over a se
 var stream;
 var flag_stream = false;
 const STREAM_PORT = 6789
-const streamServer = http.createServer(function(request, response) {
 
-  // Log that a stream connection has come through
-  console.log(
-		'Stream Connection on ' + STREAM_PORT + ' from: ' + 
-		request.socket.remoteAddress + ':' +
-		request.socket.remotePort
-	);
+const Fs = require('fs');
+const Https = require('https');
+const WebSocketServer = require('ws').Server;
 
-  // When data comes from the stream (FFmpeg) we'll pass this to the web socket
-  request.on('data', function(data) {
-    // Now that we have data let's pass it to the web socket server
-    webSocketServer.broadcast(data);
-  });
+const httpsServer = Https.createServer({
+  key: Fs.readFileSync("./cert/flexaxis.key"),
+  cert: Fs.readFileSync("./cert/flexaxis.cert")
+});
 
-}).listen(STREAM_PORT); // Listen for streams on port 3001
+httpsServer.on('request', (req, res) => {
+  res.writeHead(200);
+  res.end('hello HTTPS world\n');
+});
 
 //3. Begin web socket server
 
-const webSocketServer = new WebSocket.Server({
-  server: streamServer
+const webSocketServer = new WebSocketServer({
+  path: 'ws://localhost:6789/stream',
+  server: httpsServer
+});
+
+
+httpsServer.listen(STREAM_PORT, hostname, () => {
+  console.log(`Stream server running at https://${hostname}:${STREAM_PORT}/stream`);
 });
 
 // Broadcast the stream via websocket to connected clients
@@ -101,7 +105,7 @@ io.on("connection", (socket) => {
         "-codec:v", "mpeg1video",
         "-b", "800k",
         "-f", "mpegts",
-        "http://127.0.0.1:6789/stream",
+        "https://127.0.0.1:6789/stream",
       ];
     
       // Spawn an ffmpeg instance
