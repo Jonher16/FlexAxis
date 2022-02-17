@@ -50,7 +50,7 @@ httpsServer.on('request', (req, res) => {
 //3. Begin web socket server
 
 const webSocketServer = new WebSocketServer({
-  path: 'ws://localhost:6789/stream',
+  path: 'wss://localhost:6789/stream',
   server: httpsServer
 });
 
