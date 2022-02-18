@@ -33,8 +33,7 @@ sudo apt install ffmpeg
 ```
 
 Then run
-```node server3.js```
-and launch the app using
+```node server3.js``` in the *Backend* folder, go back to root folder and launch the app using
 ```npm start```
 
 ## Possible errors
