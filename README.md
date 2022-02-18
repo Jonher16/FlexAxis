@@ -4,8 +4,8 @@ Web-based platform in order to control PTZ-compatible Axis Cameras using the Nod
 
 ## Architecture
 
-- Frontend: ReactJS + React Bootstrap + SCSS
-- Backend (server3.js):
+- Frontend (.): ReactJS + React Bootstrap + SCSS
+- Backend (./Backend/server3.js):
    - Socket.io server. Running over HTTPS (Port 4001)
    - Websockets stream server. Running over HTTPS (Port 6789)
    - Node AxisPTZ client
