@@ -29,6 +29,9 @@ server.on('request', (req, res) => {
 		req.socket.remoteAddress + ':' +
 		req.socket.remotePort
 	);
+  res.statusCode = 200;
+  res.setHeader("Content-Type", "text/plain");
+  res.end("Certificates accepted. You may now return to the FlexAxis panel.");
 
 })
 
