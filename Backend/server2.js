@@ -38,25 +38,28 @@ const Https = require('https');
 const WebSocketServer = require('ws').Server;
 
 const httpsServer = Https.createServer({
-  key: Fs.readFileSync("./cert/flexaxis.key"),
-  cert: Fs.readFileSync("./cert/flexaxis.cert")
+  key: Fs.readFileSync("./cert/key.pem"),
+  cert: Fs.readFileSync("./cert/cert.pem")
 });
 
 httpsServer.on('request', (req, res) => {
-  res.writeHead(200);
-  res.end('hello HTTPS world\n');
-});
+  console.log(
+		'Stream Connection on ' + STREAM_PORT + ' from: ' + 
+		req.socket.remoteAddress + ':' +
+		req.socket.remotePort
+	);
+  req.on('data', function(data) {
+    // Now that we have data let's pass it to the web socket server
+    webSocketServer.broadcast(data);
+  });
+  
+}).listen(STREAM_PORT);
+
 
 //3. Begin web socket server
 
 const webSocketServer = new WebSocketServer({
-  path: 'wss://localhost:6789/stream',
   server: httpsServer
-});
-
-
-httpsServer.listen(STREAM_PORT, hostname, () => {
-  console.log(`Stream server running at https://${hostname}:${STREAM_PORT}/stream`);
 });
 
 // Broadcast the stream via websocket to connected clients
