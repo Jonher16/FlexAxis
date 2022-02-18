@@ -21,7 +21,7 @@ Web-based platform in order to control PTZ-compatible Axis Cameras using the Nod
 First, install dependencies in both frontend and backend.
 
 ```
-cd flex-axis-ptz
+cd flexaxis
 npm install
 cd Backend
 npm install
