@@ -8,8 +8,7 @@ First commit. Simple button and keyboard functionalities in the frontend capable
 
 ## To Fix
 
-- Frontend style and archtiecture
-- Add Video source
+-Small functional changes
 
 ## Installation
 
@@ -21,6 +20,10 @@ npm install
 cd Backend
 npm install
 ```
+Then run
+```node server2.js```
+and launch the app using
+```npm start```
 
 ## Credits
 
