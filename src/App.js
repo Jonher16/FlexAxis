@@ -9,9 +9,8 @@ import Col from "react-bootstrap/Col";
 import { Form } from "react-bootstrap";
 import JSMpeg from "@cycjimmy/jsmpeg-player";
 
-const ffmpegIP = "localhost";
-
-const ENDPOINT = "http://localhost:4001";
+const ffmpegIP = "172.20.85.90";
+const ENDPOINT = `https://${ffmpegIP}:4001`;
 const socket = io(ENDPOINT);
 
 function App() {
@@ -68,6 +67,8 @@ function App() {
     }
   }, [flagCredentials]);
 
+  //KEYBOARD LISTENERS
+
   var flagW = false;
   var flagA = false;
   var flagS = false;
@@ -76,6 +77,7 @@ function App() {
   var flagE = false;
   var flagSL = false;
   var flagSpace = false;
+
 
   useEffect(() => {
     document.addEventListener("keydown", (e) => {
