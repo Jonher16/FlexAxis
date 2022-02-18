@@ -6,7 +6,7 @@ const socketIo = require("socket.io"); //Packet to send commands over SocketIo
 //AXIS REQUIREMENTS
 
 var Axis = require("./Axis.js");
-var axis = new Axis("212.170.116.46", "root", "pass", { camera: "1" });
+var axis = new Axis("172.20.85.127", "root", "Nuuk2021", { camera: "1" });
 
 //Socket.io Server Declarations
 
@@ -52,7 +52,7 @@ httpsServer.on('request', (req, res) => {
     // Now that we have data let's pass it to the web socket server
     webSocketServer.broadcast(data);
   });
-  
+
 }).listen(STREAM_PORT);
 
 

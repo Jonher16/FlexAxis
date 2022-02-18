@@ -9,7 +9,7 @@ import Col from "react-bootstrap/Col";
 import { Form } from "react-bootstrap";
 import JSMpeg from "@cycjimmy/jsmpeg-player";
 
-const ffmpegIP = "localhost";
+const ffmpegIP = "172.20.85.90";
 
 const ENDPOINT = "http://127.0.0.1:4001";
 const socket = io(ENDPOINT);
