@@ -10,12 +10,16 @@ var axis = new Axis("172.20.85.127", "root", "Nuuk2021", { camera: "1" });
 
 //Socket.io Server Declarations
 
-const hostname = "127.0.0.1";
+const hostname = "localhost";
 const port = 4001;
 const server = http.createServer((req, res) => {
   res.statusCode = 200;
   res.setHeader("Content-Type", "text/plain");
   res.end("SocketIo Server");
+});
+
+server.listen(port, hostname, () => {
+  console.log(`Server running at http://${hostname}:${port}/`);
 });
 
 const io = require("socket.io")(server, {
@@ -183,6 +187,4 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
-});
+
