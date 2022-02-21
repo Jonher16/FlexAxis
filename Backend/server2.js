@@ -10,7 +10,7 @@ var axis = new Axis("172.20.85.127", "root", "Nuuk2021", { camera: "1" });
 
 //Socket.io Server Declarations
 
-const hostname = "localhost";
+const hostname = "92.222.23.71";
 const port = 4001;
 const server = http.createServer((req, res) => {
   res.statusCode = 200;

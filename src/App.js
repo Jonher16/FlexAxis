@@ -9,7 +9,7 @@ import Col from "react-bootstrap/Col";
 import { Form } from "react-bootstrap";
 import JSMpeg from "@cycjimmy/jsmpeg-player";
 
-const ffmpegIP = "172.20.85.90";
+const ffmpegIP = "212.170.116.46";
 const ENDPOINT = `https://${ffmpegIP}:4001`;
 const socket = io(ENDPOINT);
 
@@ -50,9 +50,9 @@ function App() {
 
   const [camera, setCamera] = useState({ ip: "", username: "", password: "" });
   const [tempcamera, setTempCamera] = useState({
-    ip: "172.20.85.127",
+    ip: "212.170.116.46",
     username: "root",
-    password: "Nuuk2022",
+    password: "pass",
   });
 
   const [flagCredentials, setFlagCredentials] = useState(true);
