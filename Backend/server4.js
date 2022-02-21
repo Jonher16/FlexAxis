@@ -12,7 +12,6 @@ const WebSocket = require('ws'); //Packet to send video over WebSocket
 //AXIS REQUIREMENTS
 
 var Axis = require("./Axis.js");
-var axis = new Axis("212.170.116.46", "root", "pass", { camera: "1" });
 
 //Socket.io Server Declarations
 
@@ -93,18 +92,18 @@ webSocketServer.broadcast = function(data) {
 
 var zoomstep = 100;
 var angle = 20;
-var ip = "127.0.0.1";
+var ip = "212.170.116.46";
 var username = "root";
-var password = "root";
+var password = "pass";
 
 //Socket.io Sockets
 
-axis = new Axis(msg.ip, msg.username, msg.password, { camera: "1" });
+    var axis = new Axis("212.170.116.46", "root", "pass", { camera: "1" });
     io.emit("welcome", `Axis camera credentials changed.`);
     flag_stream = true;
     setTimeout(function() {
       var args = [
-        "-i", `rtsp://${username}:${password}@${ip}/axis-media/media.amp`,
+        "-i", `rtsp://root:pass@212.170.116.46/axis-media/media.amp`,
         "-r", "30",
         "-s", "960x720",
         "-codec:v", "mpeg1video",
