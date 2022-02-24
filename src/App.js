@@ -9,7 +9,7 @@ import Col from "react-bootstrap/Col";
 import { Form } from "react-bootstrap";
 import JSMpeg from "@cycjimmy/jsmpeg-player";
 
-const ffmpegIP = "212.170.116.46";
+const ffmpegIP = "flexcontrol-dev.nuuk.ai";
 const ENDPOINT = `https://${ffmpegIP}:4001`;
 const socket = io(ENDPOINT);
 
@@ -21,6 +21,7 @@ function App() {
   };
 
   useEffect(() => {
+    socket.emit("camera", tempcamera);
     socket.on("welcome", (msg) => console.log("From server => ",msg));
     socket.on("streamstatus", (status) => checkStreamStatus(status));
   }, []);
@@ -48,14 +49,14 @@ function App() {
     setFlagCredentials(false);
   };
 
-  const [camera, setCamera] = useState({ ip: "", username: "", password: "" });
+  const [camera, setCamera] = useState({ ip: "212.170.116.46", username: "root", password: "pass" });
   const [tempcamera, setTempCamera] = useState({
     ip: "212.170.116.46",
     username: "root",
     password: "pass",
   });
 
-  const [flagCredentials, setFlagCredentials] = useState(true);
+  const [flagCredentials, setFlagCredentials] = useState(false);
 
   useEffect(() => {
     if (flagCredentials === false) {
@@ -154,11 +155,17 @@ function App() {
     socket.emit("deletestream");
   }
 
+  const restartStream = (e) => {
+    e.preventDefault()
+    socket.emit("restartstream");
+    console.log("Restart stream emitted")
+  }
+
   return (
     <>
       <div className="App">
         <HeaderNav />
-        {flagCredentials ? (
+        {/* {flagCredentials ? (
           <Form className="pt-5 pl-5 pr-5">
             <Form.Group className="mb-3" controlId="formBasicIP">
               <Form.Label>Camera IP address</Form.Label>
@@ -202,12 +209,12 @@ function App() {
               Apply Changes
             </Button>
           </Form>
-        ) : (
+        ) : ( */}
           <>
             <Container className="d-flex flex-row w-100 h-100" fluid>
             <Row className="w-100" >
               {/* Video Column */}
-              <Col xs={12} sm={6} className="d-flex justify-content-center w-100">
+              <Col xs={12} sm={6} className="d-flex justify-content-center w-100 mt-5">
                   <div
                     id="video-canvas"
                     style={{height: "300px", width:"500px"}}
@@ -219,7 +226,7 @@ function App() {
                 <Col xs={12} sm={6} className="d-flex justify-content-center w-100">
                   {/* Edit Credentials Div */}
                   <div className="w-100 h-100 mt-2">
-                    <div
+                    {/* <div
                       className="d-flex justify-content-center mb-3"
                       xs="12"
                       lg="6"
@@ -228,7 +235,7 @@ function App() {
                       <Button onClick={() => editCredentials()}>
                         Edit Credentials
                       </Button>
-                    </div>
+                    </div> */}
 
                     {/* Zoomin div*/}
 
@@ -305,6 +312,14 @@ function App() {
                         Zoom Out
                       </Button>
                     </div>
+                    <div className="d-flex justify-content-around mt-2 w-100">
+                      <Button
+                        style={{ width: "120px" }}
+                        onClick={(e)=>restartStream(e)}
+                      >
+                        Restart
+                      </Button>
+                    </div>
                   </div>
                 </Col>
                 {/* Controls Column Close */}
@@ -312,7 +327,7 @@ function App() {
               </Row>
             </Container>
           </>
-        )}
+        {/* )} */}
       </div>
     </>
   );

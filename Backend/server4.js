@@ -15,7 +15,7 @@ var Axis = require("./Axis.js");
 
 //Socket.io Server Declarations
 
-const hostname = "localhost";
+const hostname = "flexcontrol-dev.nuuk.ai";
 const port = 4001;
 const server = Https.createServer({
   key: Fs.readFileSync("./cert/key.pem"),
@@ -144,6 +144,34 @@ io.on("connection", (socket) => {
     stream.kill('SIGINT');
     flag_stream = false;
     io.emit("welcome", "Stream closed.");
+  });
+
+  socket.on("restartstream", () => {
+    console.log("Stream closed.");
+    stream.kill('SIGINT');
+    flag_stream = false;
+    io.emit("welcome", "Stream restarted.");
+    setTimeout(function() {
+      var args = [
+        "-i", `rtsp://root:pass@212.170.116.46/axis-media/media.amp`,
+        "-r", "30",
+        "-s", "960x720",
+        "-codec:v", "mpeg1video",
+        "-b", "800k",
+        "-f", "mpegts",
+        "https://127.0.0.1:6789/stream",
+      ];
+    
+      // Spawn an ffmpeg instance
+      stream = spawn('ffmpeg', args);
+    
+      //Uncomment if you want to see ffmpeg stream info
+      // stream.stderr.pipe(process.stderr);
+      // stream.on("exit", function(code){
+      //     console.log("Failure", code);
+      // });
+    }, 1000);
+
   });
 
   socket.on("command", (command) => {

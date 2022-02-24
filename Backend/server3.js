@@ -16,11 +16,11 @@ var axis = new Axis("212.170.116.46", "root", "pass", { camera: "1" });
 
 //Socket.io Server Declarations
 
-const hostname = "92.222.23.71";
+const hostname = "localhost";
 const port = 4001;
 const server = Https.createServer({
-  key: Fs.readFileSync("/opt/nuuk/flexcontrol/certificates/key.pem"),
-  cert: Fs.readFileSync("/opt/nuuk/flexcontrol/certificates/cert.pem")
+  key: Fs.readFileSync("./cert/key.pem"),
+  cert: Fs.readFileSync("./cert/cert.pem")
 });
 
 server.on('request', (req, res) => {
@@ -54,8 +54,8 @@ var flag_stream = false;
 const STREAM_PORT = 6789
 
 const httpsServer = Https.createServer({
-  key: Fs.readFileSync("/opt/nuuk/flexcontrol/certificates/key.pem"),
-  cert: Fs.readFileSync("/opt/nuuk/flexcontrol/certificates/cert.pem")
+  key: Fs.readFileSync("./cert/key.pem"),
+  cert: Fs.readFileSync("./cert/cert.pem")
 });
 
 httpsServer.on('request', (req, res) => {
@@ -64,6 +64,7 @@ httpsServer.on('request', (req, res) => {
 		req.socket.remoteAddress + ':' +
 		req.socket.remotePort
 	);
+  
   req.on('data', function(data) {
     // Now that we have data let's pass it to the web socket server
     webSocketServer.broadcast(data);
