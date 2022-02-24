@@ -47,6 +47,10 @@ $theme-colors: (
 
 @import "../node_modules/bootstrap/scss/bootstrap.scss";
 
+* {
+  color: $lightgray !important;
+}
+
 .App {
 
   color: $lightgray !important;
@@ -54,12 +58,10 @@ $theme-colors: (
   margin: 0;
 }
 
-.plot {
+.title {
   color: $lightgray !important;
-  height: 75vh;
-  width: 95vw;
-  
 }
+
 .btn-primary
 {
   background-color: $primary;
