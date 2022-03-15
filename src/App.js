@@ -1,15 +1,19 @@
 import "./App.scss";
 import Button from "react-bootstrap/Button";
 import io from "socket.io-client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import HeaderNav from "./components/HeaderNav";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { Form } from "react-bootstrap";
 import JSMpeg from "@cycjimmy/jsmpeg-player";
+import GobeJoystickController from "./components/GobeJoystickController";
+import $ from 'jquery';
+import DraggableVideo from "./components/DraggableVideo";
+import ControlButtons from "./components/ControlButtons";
 
-const ffmpegIP = "flexcontrol-dev.nuuk.ai";
+const ffmpegIP = "localhost";
 const ENDPOINT = `https://${ffmpegIP}:4001`;
 const socket = io(ENDPOINT);
 
@@ -22,17 +26,16 @@ function App() {
 
   useEffect(() => {
     socket.emit("camera", tempcamera);
-    socket.on("welcome", (msg) => console.log("From server => ",msg));
+    socket.on("welcome", (msg) => console.log("From server => ", msg));
     socket.on("streamstatus", (status) => checkStreamStatus(status));
   }, []);
 
-  function checkStreamStatus(status){
-    console.log(status)
-    if(status === true) {
-      setFlagCredentials(false)
-    }
-    else if(status === false) {
-      setFlagCredentials(true)
+  function checkStreamStatus(status) {
+    console.log(status);
+    if (status === true) {
+      setFlagCredentials(false);
+    } else if (status === false) {
+      setFlagCredentials(true);
     }
   }
 
@@ -49,11 +52,15 @@ function App() {
     setFlagCredentials(false);
   };
 
-  const [camera, setCamera] = useState({ ip: "212.170.116.46", username: "root", password: "pass" });
-  const [tempcamera, setTempCamera] = useState({
-    ip: "212.170.116.46",
+  const [camera, setCamera] = useState({
+    ip: "172.20.85.127",
     username: "root",
-    password: "pass",
+    password: "Nuuk2022",
+  });
+  const [tempcamera, setTempCamera] = useState({
+    ip: "172.20.85.127",
+    username: "root",
+    password: "Nuuk2022",
   });
 
   const [flagCredentials, setFlagCredentials] = useState(false);
@@ -78,7 +85,6 @@ function App() {
   var flagE = false;
   var flagSL = false;
   var flagSpace = false;
-
 
   useEffect(() => {
     document.addEventListener("keydown", (e) => {
@@ -150,20 +156,79 @@ function App() {
     });
   }, []);
 
-  function editCredentials(){
-    setFlagCredentials(true)
+  function editCredentials() {
+    setFlagCredentials(true);
     socket.emit("deletestream");
   }
 
   const restartStream = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     socket.emit("restartstream");
-    console.log("Restart stream emitted")
-  }
+    console.log("Restart stream emitted");
+  };
+
+  let flag_moving = false;
+  let lastDirection = "";
+  const handleMove = (e) => {
+    console.log(e.direction);
+    if (flag_moving === false) {
+      flag_moving = true;
+      switch (e.direction) {
+        case "LEFT":
+          socket.emit("command", "leftspeed");
+          break;
+        case "RIGHT":
+          socket.emit("command", "rightspeed");
+          break;
+        case "FORWARD":
+          socket.emit("command", "upspeed");
+          break;
+        case "BACKWARD":
+          socket.emit("command", "downspeed");
+          break;
+      }
+    } else if (flag_moving === true && e.direction !== lastDirection) {
+      socket.emit("command", "stopspeed");
+      switch (e.direction) {
+        case "LEFT":
+          socket.emit("command", "leftspeed");
+          break;
+        case "RIGHT":
+          socket.emit("command", "rightspeed");
+          break;
+        case "FORWARD":
+          socket.emit("command", "upspeed");
+          break;
+        case "BACKWARD":
+          socket.emit("command", "downspeed");
+          break;
+      }
+    }
+    console.log(e);
+    lastDirection = e.direction;
+  };
+  const handleStop = (e) => {
+    console.log(e);
+    socket.emit("command", "stopspeed");
+    flag_moving = false;
+  };
+  const handleStart = (e) => {
+    console.log(e);
+  };
+
+  //WHEEL ZOOM
+
+  
+
+  //VIDEO DRAG
+
+
+  
+  
 
   return (
     <>
-      <div className="App">
+      <div className="App border">
         <HeaderNav />
         {/* {flagCredentials ? (
           <Form className="pt-5 pl-5 pr-5">
@@ -210,123 +275,33 @@ function App() {
             </Button>
           </Form>
         ) : ( */}
-          <>
-            <Container className="d-flex flex-row w-100 h-100" fluid>
-            <Row className="w-100" >
-              {/* Video Column */}
-              <Col xs={12} sm={6} className="d-flex justify-content-center w-100 mt-5">
-                  <div
-                    id="video-canvas"
-                    style={{height: "300px", width:"500px"}}
-                  ></div>
-                </Col>
-                {/* Video Column Close */}
-              
-                {/* Controls Column*/}
-                <Col xs={12} sm={6} className="d-flex justify-content-center w-100">
-                  {/* Edit Credentials Div */}
-                  <div className="w-100 h-100 mt-2">
-                    {/* <div
-                      className="d-flex justify-content-center mb-3"
-                      xs="12"
-                      lg="6"
-                      md="6"
-                    >
-                      <Button onClick={() => editCredentials()}>
-                        Edit Credentials
-                      </Button>
-                    </div> */}
+        <>
+          {/* Video Row */}
 
-                    {/* Zoomin div*/}
-
-                    <div className="d-flex mt-1 justify-content-center w-100">
-                      <Button
-                        variant="primary"
-                        style={{ width: "120px" }}
-                        onClick={(e) => handleButton(e, "zoomin")}
-                      >
-                        Zoom in
-                      </Button>
-                    </div>
-
-                    {/* Joysticks div*/}
-
-                    <div className="d-flex flex-column mt-3 justify-content-center">
-                      {/* Tilt Up div */}
-                      <div className="d-flex justify-content-around w-100">
-                        <Button
-                          style={{ width: "120px", height: "auto" }}
-                          onClick={(e) => handleButton(e, "up")}
-                        >
-                          Tilt Up
-                        </Button>
-                      </div>
-                      {/* Pan Left/Right Container */}
-                      <Container className="w-100">
-                        <Row
-                          xs="12"
-                          lg="6"
-                          md="6"
-                          className="d-flex mt-2 justify-content-center"
-                        >
-                          <Col
-                            className="d-flex justify-content-center"
-                            style={{ width: "120px" }}
-                          >
-                            <Button
-                              style={{ width: "120px" }}
-                              onClick={(e) => handleButton(e, "left")}
-                            >
-                              Pan Left
-                            </Button>
-                          </Col>
-                          <Col
-                            className="d-flex justify-content-center"
-                            style={{ width: "120px" }}
-                          >
-                            <Button
-                              style={{ width: "120px" }}
-                              onClick={(e) => handleButton(e, "right")}
-                            >
-                              Pan Right
-                            </Button>
-                          </Col>
-                        </Row>
-                      </Container>
-                      {/* Tilt down div */}
-                      <div className="d-flex justify-content-around mt-2">
-                        <Button
-                          style={{ width: "120px" }}
-                          onClick={(e) => handleButton(e, "down")}
-                        >
-                          Tilt Down
-                        </Button>
-                      </div>
-                    </div>
-                    {/* Zoom out div */}
-                    <div className="d-flex justify-content-around mt-2 w-100">
-                      <Button
-                        style={{ width: "120px" }}
-                        onClick={(e) => handleButton(e, "zoomout")}
-                      >
-                        Zoom Out
-                      </Button>
-                    </div>
-                    <div className="d-flex justify-content-around mt-2 w-100">
-                      <Button
-                        style={{ width: "120px" }}
-                        onClick={(e)=>restartStream(e)}
-                      >
-                        Restart
-                      </Button>
-                    </div>
-                  </div>
-                </Col>
-                {/* Controls Column Close */}
-                
-              </Row>
-            </Container>
-          </>
+          <div className="d-flex flex-row justify-content-center w-100 h-100 border">
+            <DraggableVideo endpoint={ENDPOINT} socket={socket} />
+            {/* <div className="w-25 border d-flex flex-row justify-contents-center align-items-center m-3">
+              <div className="w-100">
+                <GobeJoystickController
+                  opacity={0.75}
+                  move={handleMove}
+                  stop={handleStop}
+                  start={handleStart}
+                />
+              </div>
+            </div> */}
+          </div>
+          {/* Video Row Close */}
+          {/* <ControlButtons onClick={handleButton} /> */}
+          <div className="d-flex justify-content-around mt-2 w-100">
+                <Button
+                  style={{ width: "120px" }}
+                  onClick={(e) => restartStream(e)}
+                >
+                  Restart
+                </Button>
+              </div>
+        </>
         {/* )} */}
       </div>
     </>
