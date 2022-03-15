@@ -15,7 +15,7 @@ var Axis = require("./Axis.js");
 
 //Socket.io Server Declarations
 
-const hostname = "flexcontrol-dev.nuuk.ai";
+const hostname = "localhost";
 const port = 4001;
 const server = Https.createServer({
   key: Fs.readFileSync("./cert/key.pem"),
@@ -90,20 +90,20 @@ webSocketServer.broadcast = function(data) {
 
 //Variables
 
-var zoomstep = 100;
+var zoomstep = 50;
 var angle = 20;
-var ip = "212.170.116.46";
+var ip = "172.20.85.127";
 var username = "root";
-var password = "pass";
+var password = "Nuuk2022";
 
 //Socket.io Sockets
 
-    var axis = new Axis("212.170.116.46", "root", "pass", { camera: "1" });
+    var axis = new Axis(ip, username, password, { camera: "1" });
     io.emit("welcome", `Axis camera credentials changed.`);
     flag_stream = true;
     setTimeout(function() {
       var args = [
-        "-i", `rtsp://root:pass@212.170.116.46/axis-media/media.amp`,
+        "-i", `rtsp://${username}:${password}@${ip}/axis-media/media.amp`,
         "-r", "30",
         "-s", "960x720",
         "-codec:v", "mpeg1video",
@@ -153,7 +153,7 @@ io.on("connection", (socket) => {
     io.emit("welcome", "Stream restarted.");
     setTimeout(function() {
       var args = [
-        "-i", `rtsp://root:pass@212.170.116.46/axis-media/media.amp`,
+        "-i", `rtsp://root:pass@172.20.85.127/axis-media/media.amp`,
         "-r", "30",
         "-s", "960x720",
         "-codec:v", "mpeg1video",
