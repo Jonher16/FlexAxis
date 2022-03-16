@@ -92,14 +92,31 @@ webSocketServer.broadcast = function(data) {
 
 var zoomstep = 50;
 var angle = 20;
-var ip = "172.20.85.127";
-var username = "root";
-var password = "Nuuk2022";
+var ip = "";
+var username = "";
+var password = "";
 
 //Socket.io Sockets
 
-    var axis = new Axis(ip, username, password, { camera: "1" });
+var axis;
+    
+io.on("connection", (socket) => {
+  console.log("A user has connected");
+  io.emit("welcome", "Welcome, new user");
+  io.emit("streamstatus", flag_stream);
+
+  socket.on("camera", (msg) => {
+    ip = msg.ip;
+    username = msg.username;
+    password = msg.password;
+
+    console.log(msg.ip);
+    console.log(msg.username);
+    console.log(msg.password);
+    console.log(`rtsp://${username}:${password}@${ip}/axis-media/media.amp`);
+
     io.emit("welcome", `Axis camera credentials changed.`);
+    axis = new Axis(ip, username, password, { camera: "1" });
     flag_stream = true;
     setTimeout(function() {
       var args = [
@@ -122,27 +139,13 @@ var password = "Nuuk2022";
       });
     }, 1000);
 
-io.on("connection", (socket) => {
-  console.log("A user has connected");
-  io.emit("welcome", "Welcome, new user");
-  io.emit("streamstatus", flag_stream);
-
-  socket.on("camera", (msg) => {
-    ip = msg.ip;
-    username = msg.username;
-    password = msg.password;
-
-    console.log(msg.ip);
-    console.log(msg.username);
-    console.log(msg.password);
-    console.log(`rtsp://${username}:${password}@${ip}/axis-media/media.amp`);
-
   });
 
   socket.on("deletestream", () => {
     console.log("Stream closed.");
     stream.kill('SIGINT');
     flag_stream = false;
+    io.emit("streamstatus", flag_stream);
     io.emit("welcome", "Stream closed.");
   });
 
@@ -153,7 +156,7 @@ io.on("connection", (socket) => {
     io.emit("welcome", "Stream restarted.");
     setTimeout(function() {
       var args = [
-        "-i", `rtsp://root:pass@172.20.85.127/axis-media/media.amp`,
+        "-i", `rtsp://${username}:${password}@${ip}/axis-media/media.amp`,
         "-r", "30",
         "-s", "960x720",
         "-codec:v", "mpeg1video",
@@ -175,7 +178,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("command", (command) => {
-    console.log(command);
+    //console.log(command);
     switch (command) {
       case "zoomin":
         axis.ptz.rzoom(zoomstep);

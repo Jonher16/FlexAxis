@@ -9,15 +9,17 @@ import Col from "react-bootstrap/Col";
 import { Form } from "react-bootstrap";
 import JSMpeg from "@cycjimmy/jsmpeg-player";
 import GobeJoystickController from "./components/GobeJoystickController";
-import $ from 'jquery';
+import $ from "jquery";
 import DraggableVideo from "./components/DraggableVideo";
 import ControlButtons from "./components/ControlButtons";
+import Credentials from "./components/Credentials"
 
 const ffmpegIP = "localhost";
 const ENDPOINT = `https://${ffmpegIP}:4001`;
 const socket = io(ENDPOINT);
 
 function App() {
+
   const handleButton = (e, command) => {
     e.preventDefault();
     socket.emit("command", command);
@@ -25,7 +27,6 @@ function App() {
   };
 
   useEffect(() => {
-    socket.emit("camera", tempcamera);
     socket.on("welcome", (msg) => console.log("From server => ", msg));
     socket.on("streamstatus", (status) => checkStreamStatus(status));
   }, []);
@@ -39,31 +40,21 @@ function App() {
     }
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e, tempcamera) => {
     e.preventDefault();
     setCamera(tempcamera);
     socket.emit("camera", tempcamera);
-    setTempCamera({
-      ip: "",
-      username: "",
-      password: "",
-    });
     alert("Axis camera credentials changed successfuly");
     setFlagCredentials(false);
   };
 
   const [camera, setCamera] = useState({
-    ip: "172.20.85.127",
-    username: "root",
-    password: "Nuuk2022",
-  });
-  const [tempcamera, setTempCamera] = useState({
-    ip: "172.20.85.127",
-    username: "root",
-    password: "Nuuk2022",
+    ip: "",
+    username: "",
+    password: "",
   });
 
-  const [flagCredentials, setFlagCredentials] = useState(false);
+  const [flagCredentials, setFlagCredentials] = useState(true);
 
   useEffect(() => {
     if (flagCredentials === false) {
@@ -167,6 +158,8 @@ function App() {
     console.log("Restart stream emitted");
   };
 
+  //JOYSTICK CONTROLS
+
   let flag_moving = false;
   let lastDirection = "";
   const handleMove = (e) => {
@@ -216,93 +209,41 @@ function App() {
     console.log(e);
   };
 
-  //WHEEL ZOOM
-
-  
-
-  //VIDEO DRAG
-
-
-  
-  
-
   return (
     <>
-      <div className="App border">
+      <div className="App">
         <HeaderNav />
-        {/* {flagCredentials ? (
-          <Form className="pt-5 pl-5 pr-5">
-            <Form.Group className="mb-3" controlId="formBasicIP">
-              <Form.Label>Camera IP address</Form.Label>
-              <Form.Control
-                type="ip"
-                placeholder="IP address"
-                value={tempcamera.ip}
-                onChange={(e) =>
-                  setTempCamera({ ...tempcamera, ip: e.target.value })
-                }
-              />
-              <Form.Text className="text-muted">
-                Private or Public. If public, make sure port 443 is port
-                forwarded.
-              </Form.Text>
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="formBasicUser">
-              <Form.Label>Username</Form.Label>
-              <Form.Control
-                type="user"
-                placeholder="Username"
-                value={tempcamera.username}
-                onChange={(e) =>
-                  setTempCamera({ ...tempcamera, username: e.target.value })
-                }
-              />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="formBasicPassword">
-              <Form.Label>Password</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="Password"
-                value={tempcamera.password}
-                onChange={(e) =>
-                  setTempCamera({ ...tempcamera, password: e.target.value })
-                }
-              />
-            </Form.Group>
-
-            <Button className="mt-2" onClick={(e) => handleSubmit(e)}>
-              Apply Changes
-            </Button>
-          </Form>
-        ) : ( */}
-        <>
-          {/* Video Row */}
-
-          <div className="d-flex flex-row justify-content-center w-100 h-100 border">
+        {flagCredentials ? (
+          <Credentials onClick={handleSubmit} />
+        ) : (
+          <>
             <DraggableVideo endpoint={ENDPOINT} socket={socket} />
-            {/* <div className="w-25 border d-flex flex-row justify-contents-center align-items-center m-3">
-              <div className="w-100">
-                <GobeJoystickController
-                  opacity={0.75}
-                  move={handleMove}
-                  stop={handleStop}
-                  start={handleStart}
-                />
-              </div>
-            </div> */}
-          </div>
-          {/* Video Row Close */}
-          {/* <ControlButtons onClick={handleButton} /> */}
-          <div className="d-flex justify-content-around mt-2 w-100">
-                <Button
-                  style={{ width: "120px" }}
-                  onClick={(e) => restartStream(e)}
-                >
-                  Restart
-                </Button>
-              </div>
-        </>
-        {/* )} */}
+          
+            <div className="d-flex justify-content-around mt-2 w-100">
+              <Button
+                style={{ width: "155px" }}
+                onClick={(e) => restartStream(e)}
+              >
+                Restart Streaming
+              </Button>
+            </div>
+            <div className="d-flex justify-content-around mt-2 w-100">
+              <Button
+                style={{ width: "155px" }}
+                onClick={(e) => editCredentials(e)}
+              >
+                Edit Camera
+              </Button>
+            </div>
+            {/* <GobeJoystickController
+              opacity={0.75}
+              move={handleMove}
+              stop={handleStop}
+              start={handleStart}
+            /> */}
+          </>
+        )}
+        <>{/* <ControlButtons onClick={handleButton} /> */}</>
       </div>
     </>
   );
