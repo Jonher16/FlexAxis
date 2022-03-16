@@ -37,7 +37,7 @@ export default class DraggableVideo extends Component {
     $box.on("touchend mouseup", function (e) {
       $box.off("touchend mousemove", touchmove);
       $box.css('cursor','pointer');
-      console.log("ready");
+      //console.log("ready");
       socket.emit("command", "stopspeed");
       flag_move = false;
     });
@@ -55,14 +55,14 @@ export default class DraggableVideo extends Component {
 
       if (currentY > lastY) {
         if (flag_move === false || (flag_move === true && lastDirection !== "down")) {
-          console.log("down");
+          //console.log("down");
           socket.emit("command", "downspeed");
           flag_move = true;
           lastDirection = "down"
         }
       } else if (currentY < lastY) {
         if (flag_move === false || (flag_move === true && lastDirection !== "up")) {
-          console.log("up");
+          //console.log("up");
           socket.emit("command", "upspeed");
           flag_move = true;
           lastDirection="up"
@@ -72,14 +72,14 @@ export default class DraggableVideo extends Component {
 
       if (currentX > lastX) {
         if (flag_move === false || (flag_move === true && lastDirection !== "right")) {
-          console.log("right");
+          //console.log("right");
           socket.emit("command", "rightspeed");
           flag_move = true;
           lastDirection = "right"
         }
       } else if (currentX < lastX) {
         if (flag_move === false || (flag_move === true && lastDirection !== "left")) {
-          console.log("left");
+          //console.log("left");
           socket.emit("command", "leftspeed");
           flag_move = true;
           lastDirection="left"
@@ -92,11 +92,12 @@ export default class DraggableVideo extends Component {
 
   render() {
     return (
+      <div className="w-100 d-inline-flex justify-content-center">
       <div
-        className="m-3 d-flex flex-row justify-content-center border w-75 dragcanvas"
+        className="m-3  w-75"
         id="video-canvas"
-        style={{ height: "300px", width: "500px" }}
-      ></div>
+        style={{ height: "500px", width: "1000px" }}
+      ></div></div>
     );
   }
 }
