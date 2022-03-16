@@ -1,13 +1,14 @@
 //SOCKET.IO SERVER REQUIREMENTS
 
-const Https = require('https');
+const Https = require("https");
 const socketIo = require("socket.io"); //Packet to send commands over SocketIo
 
 //WEBSOCKETS MEDIA SERVER REQUIEMENTS
 
-const Fs = require('fs');
-const WebSocketServer = require('ws').Server;
-const WebSocket = require('ws'); //Packet to send video over WebSocket
+const Fs = require("fs");
+const WebSocketServer = require("ws").Server;
+const WebSocket = require("ws"); //Packet to send video over WebSocket
+const process = require("process");
 
 //AXIS REQUIREMENTS
 
@@ -19,20 +20,22 @@ const hostname = "localhost";
 const port = 4001;
 const server = Https.createServer({
   key: Fs.readFileSync("./cert/key.pem"),
-  cert: Fs.readFileSync("./cert/cert.pem")
+  cert: Fs.readFileSync("./cert/cert.pem"),
 });
 
-server.on('request', (req, res) => {
+server.on("request", (req, res) => {
   console.log(
-		'Stream Connection on ' + STREAM_PORT + ' from: ' + 
-		req.socket.remoteAddress + ':' +
-		req.socket.remotePort
-	);
+    "Stream Connection on " +
+      STREAM_PORT +
+      " from: " +
+      req.socket.remoteAddress +
+      ":" +
+      req.socket.remotePort
+  );
   res.statusCode = 200;
   res.setHeader("Content-Type", "text/plain");
   res.end("Certificates accepted. You may now return to the FlexAxis panel.");
-
-})
+});
 
 server.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
@@ -47,46 +50,52 @@ const io = require("socket.io")(server, {
 
 //Stream declarations
 
-const spawn = require('child_process').spawn; //Packet to spawn ffmpeg over a separate process
+const spawn = require("child_process").spawn; //Packet to spawn ffmpeg over a separate process
+
 var stream;
+var axis;
+var pid;
+
 var flag_stream = false;
-const STREAM_PORT = 6789
+const STREAM_PORT = 6789;
 
 const httpsServer = Https.createServer({
   key: Fs.readFileSync("./cert/key.pem"),
-  cert: Fs.readFileSync("./cert/cert.pem")
+  cert: Fs.readFileSync("./cert/cert.pem"),
 });
 
-httpsServer.on('request', (req, res) => {
-  console.log(
-		'Stream Connection on ' + STREAM_PORT + ' from: ' + 
-		req.socket.remoteAddress + ':' +
-		req.socket.remotePort
-	);
-  
-  req.on('data', function(data) {
-    // Now that we have data let's pass it to the web socket server
-    webSocketServer.broadcast(data);
-  });
+httpsServer
+  .on("request", (req, res) => {
+    console.log(
+      "Stream Connection on " +
+        STREAM_PORT +
+        " from: " +
+        req.socket.remoteAddress +
+        ":" +
+        req.socket.remotePort
+    );
 
-}).listen(STREAM_PORT);
-
+    req.on("data", function (data) {
+      // Now that we have data let's pass it to the web socket server
+      webSocketServer.broadcast(data);
+    });
+  })
+  .listen(STREAM_PORT);
 
 //3. Begin web socket server
 
 const webSocketServer = new WebSocketServer({
-  server: httpsServer
+  server: httpsServer,
 });
 
 // Broadcast the stream via websocket to connected clients
-webSocketServer.broadcast = function(data) {
+webSocketServer.broadcast = function (data) {
   webSocketServer.clients.forEach(function each(client) {
     if (client.readyState === WebSocket.OPEN) {
       client.send(data);
     }
   });
 };
-
 
 //Variables
 
@@ -98,8 +107,6 @@ var password = "";
 
 //Socket.io Sockets
 
-var axis;
-    
 io.on("connection", (socket) => {
   console.log("A user has connected");
   io.emit("welcome", "Welcome, new user");
@@ -114,71 +121,98 @@ io.on("connection", (socket) => {
     console.log(msg.username);
     console.log(msg.password);
     console.log(`rtsp://${username}:${password}@${ip}/axis-media/media.amp`);
-
+    console.log("Starting stream...")
     io.emit("welcome", `Axis camera credentials changed.`);
+    io.emit("welcome", "Starting stream...")
     axis = new Axis(ip, username, password, { camera: "1" });
     flag_stream = true;
-    setTimeout(function() {
+    setTimeout(function () {
       var args = [
-        "-i", `rtsp://${username}:${password}@${ip}/axis-media/media.amp`,
-        "-r", "30",
-        "-s", "960x720",
-        "-codec:v", "mpeg1video",
-        "-b", "800k",
-        "-f", "mpegts",
+        "-i",
+        `rtsp://${username}:${password}@${ip}/axis-media/media.amp`,
+        "-r",
+        "30",
+        "-s",
+        "960x720",
+        "-codec:v",
+        "mpeg1video",
+        "-b",
+        "800k",
+        "-f",
+        "mpegts",
         "https://127.0.0.1:6789/stream",
       ];
-    
-      // Spawn an ffmpeg instance
-      stream = spawn('ffmpeg', args);
-    
-      //Uncomment if you want to see ffmpeg stream info
-      stream.stderr.pipe(process.stderr);
-      stream.on("exit", function(code){
-          console.log("Failure", code);
-      });
-    }, 1000);
 
+      // Spawn an ffmpeg instance
+      try {
+        stream = spawn("ffmpeg", args);
+        pid = stream.pid;
+        io.emit("welcome", "Stream started.");
+        console.log("Stream started.")
+        //Uncomment if you want to see ffmpeg stream info
+        // stream.stderr.pipe(process.stderr);
+        // stream.on("exit", function (code) {
+        //   console.log("Failure", code);
+        // });
+      } catch (error) {
+        console.log(error);
+      }
+    }, 3000);
   });
 
   socket.on("deletestream", () => {
     console.log("Stream closed.");
-    stream.kill('SIGINT');
+    process.kill(pid, "SIGINT");
+    axis = null;
     flag_stream = false;
     io.emit("streamstatus", flag_stream);
     io.emit("welcome", "Stream closed.");
   });
 
   socket.on("restartstream", () => {
+    io.emit("welcome", "Stream closed. Restarting stream...")
     console.log("Stream closed.");
-    stream.kill('SIGINT');
+    axis = null;
+    process.kill(pid, "SIGINT");
     flag_stream = false;
-    io.emit("welcome", "Stream restarted.");
-    setTimeout(function() {
+    axis = new Axis(ip, username, password, { camera: "1" });
+    setTimeout(function () {
       var args = [
-        "-i", `rtsp://${username}:${password}@${ip}/axis-media/media.amp`,
-        "-r", "30",
-        "-s", "960x720",
-        "-codec:v", "mpeg1video",
-        "-b", "800k",
-        "-f", "mpegts",
+        "-i",
+        `rtsp://${username}:${password}@${ip}/axis-media/media.amp`,
+        "-r",
+        "30",
+        "-s",
+        "960x720",
+        "-codec:v",
+        "mpeg1video",
+        "-b",
+        "800k",
+        "-f",
+        "mpegts",
         "https://127.0.0.1:6789/stream",
       ];
-    
-      // Spawn an ffmpeg instance
-      stream = spawn('ffmpeg', args);
-    
-      //Uncomment if you want to see ffmpeg stream info
-      // stream.stderr.pipe(process.stderr);
-      // stream.on("exit", function(code){
-      //     console.log("Failure", code);
-      // });
-    }, 1000);
 
+      // Spawn an ffmpeg instance
+      try {
+        stream = spawn("ffmpeg", args);
+        pid = stream.pid;
+        io.emit("welcome", "Stream restarted.");
+        console.log("Stream restarted.")
+        //Uncomment if you want to see ffmpeg stream info
+        // stream.stderr.pipe(process.stderr);
+        // stream.on("exit", function (code) {
+        //   console.log("Failure", code);
+        // });
+      } catch (error) {
+        console.log(error);
+      }
+    }, 3000);
   });
 
   socket.on("command", (command) => {
     //console.log(command);
+    try{
     switch (command) {
       case "zoomin":
         axis.ptz.rzoom(zoomstep);
@@ -222,6 +256,8 @@ io.on("connection", (socket) => {
       case "stopzoomspeed":
         axis.ptz.continuouszoommove(0);
         break;
+    }} catch(error){
+      console.log("Error when sending command: ", error)
     }
   });
 
@@ -229,5 +265,3 @@ io.on("connection", (socket) => {
     console.log("A user has disconnected");
   });
 });
-
-
