@@ -11,14 +11,14 @@ export default class DraggableVideo extends Component {
     var lastX, lastY;
     var $box = $("#video-canvas");
     console.log("ready");
-    $box.css('cursor','pointer');
+    $box.css('cursor','move');
 
 
     $box.on('wheel', function(e) { 
       var delta = e.originalEvent.deltaY/Math.abs(e.originalEvent.deltaY);
-      console.log(delta)
+      //console.log(delta)
       if (delta == -1){
-        console.log("up")
+        //console.log("up")
         socket.emit("command","zoomin")
       } // going up
       else {
@@ -30,19 +30,19 @@ export default class DraggableVideo extends Component {
 
     $box.on("touchstart mousedown", function (e) {
       $box.on("touchmove mousemove", touchmove);
-      $box.css('cursor','grab');
       
     });
 
     $box.on("touchend mouseup", function (e) {
       $box.off("touchend mousemove", touchmove);
-      $box.css('cursor','pointer');
+      $box.css('cursor','move');
       //console.log("ready");
       socket.emit("command", "stopspeed");
       flag_move = false;
     });
 
     function touchmove(e) {
+      $box.css('cursor','grab');
       var currentX, currentY;
       var buffer = 1000;
     var lastDirection = "";
