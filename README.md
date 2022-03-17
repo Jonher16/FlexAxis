@@ -2,6 +2,15 @@
 
 Web-based platform in order to control PTZ-compatible Axis Cameras using the NodeJS client for AxisPTZ API. It includes a frontend connected via Socket.io to a Backend which uses the NodeJS client to send requests to the Axis Camera via the official AxisPTZ API.
 
+Includes:
+
+-Visualizing the video from an Axis camera
+-Controling camera PTZ functions by clicking and dragging in the video canvas (camera pan) and up/down mouse wheel (camera zoom in/out)
+-Controlling camera via keyboard (WASD for panning, QE for zooming)
+-Restart stream button
+-Camera credential screen (currently disabled, fixed to a single camera for other testing) and credential change button
+-Joystick camera control (currently disabled)
+
 ## Architecture
 
 - Frontend ( . ): ReactJS + React Bootstrap + SCSS
@@ -13,8 +22,7 @@ Web-based platform in order to control PTZ-compatible Axis Cameras using the Nod
 
 ## To Fix
 
-- Add environment variables
-- Clean & Reorganize code
+- On video canvas pointer
 
 ## Installation
 
