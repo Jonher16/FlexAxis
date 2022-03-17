@@ -9,7 +9,7 @@ Web-based platform in order to control PTZ-compatible Axis Cameras using the Nod
 - Controlling camera via keyboard (WASD for panning, QE for zooming)
 - Restart stream button
 - Camera credential screen (currently disabled, fixed to a single camera for other testing) and credential change button
-- Joystick camera control (currently disabled)
+- Virtual joystick camera control (currently disabled)
 
 ## Architecture
 
