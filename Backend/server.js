@@ -17,15 +17,17 @@ var Axis = require("./Axis.js");
 //.env MODULE
 
 require('dotenv').config()
-console.log("ENV",process.env)
+
+const KEY_LOCATION = process.env.KEY_LOCATION
+const CERT_LOCATION = process.env.CERT_LOCATION
 
 //Socket.io Server Declarations
 
 const hostname = process.env.SERVER_IP
 const port = 4001;
 const server = Https.createServer({
-  key: Fs.readFileSync("./cert/key.pem"),
-  cert: Fs.readFileSync("./cert/cert.pem"),
+  key: Fs.readFileSync(KEY_LOCATION),
+  cert: Fs.readFileSync(CERT_LOCATION),
 });
 
 server.on("request", (req, res) => {
@@ -65,8 +67,8 @@ var flag_stream = false;
 const STREAM_PORT = 6789;
 
 const httpsServer = Https.createServer({
-  key: Fs.readFileSync("./cert/key.pem"),
-  cert: Fs.readFileSync("./cert/cert.pem"),
+  key: Fs.readFileSync(KEY_LOCATION),
+  cert: Fs.readFileSync(CERT_LOCATION),
 });
 
 httpsServer
@@ -104,11 +106,12 @@ webSocketServer.broadcast = function (data) {
 
 //Variables
 
-var zoomstep = 50;
-var angle = 20;
-var ip = "172.20.85.127"; //Set to "" in credential mode
-var username = "root"; //Set to "" in credential mode
-var password = "Nuuk2022"; //Set to "" in credential mode
+const zoomstep = 50;
+const angle = 20;
+const speed = 10;
+const ip = "172.20.85.127"; //Set to "" in credential mode
+const username = "root"; //Set to "" in credential mode
+const password = "Nuuk2022"; //Set to "" in credential mode
 
 //COMMENT FOR CREDENTIAL CHECK START
 
@@ -297,25 +300,25 @@ io.on("connection", (socket) => {
           axis.ptz.rtilt(-angle);
           break;
         case "upspeed":
-          axis.ptz.continuouspantiltmove(0, 10);
+          axis.ptz.continuouspantiltmove(0, speed);
           break;
         case "downspeed":
-          axis.ptz.continuouspantiltmove(0, -10);
+          axis.ptz.continuouspantiltmove(0, -speed);
           break;
         case "leftspeed":
-          axis.ptz.continuouspantiltmove(-10, 0);
+          axis.ptz.continuouspantiltmove(-speed, 0);
           break;
         case "rightspeed":
-          axis.ptz.continuouspantiltmove(10, 0);
+          axis.ptz.continuouspantiltmove(speed, 0);
           break;
         case "stopspeed":
           axis.ptz.continuouspantiltmove(0, 0);
           break;
         case "zoominspeed":
-          axis.ptz.continuouszoommove(10);
+          axis.ptz.continuouszoommove(speed);
           break;
         case "zoomoutspeed":
-          axis.ptz.continuouszoommove(-10);
+          axis.ptz.continuouszoommove(-speed);
           break;
         case "stopzoomspeed":
           axis.ptz.continuouszoommove(0);
@@ -328,5 +331,6 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     console.log("A user has disconnected");
+    io.emit("welcome", "A user has disconnected")
   });
 });
