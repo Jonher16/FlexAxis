@@ -14,10 +14,10 @@ import DraggableVideo from "./components/DraggableVideo";
 import ControlButtons from "./components/ControlButtons";
 import Credentials from "./components/Credentials"
 
-const ffmpegIP = "localhost";
-const ENDPOINT = `https://${ffmpegIP}:4001`;
+const APP_IP = process.env.REACT_APP_APP_IP;
+const ENDPOINT = `https://${APP_IP}:4001`;
 const socket = io(ENDPOINT);
-
+console.log("APP IP",APP_IP)
 function App() {
 
   const handleButton = (e, command) => {
@@ -27,6 +27,7 @@ function App() {
   };
 
   useEffect(() => {
+    console.log("entre")
     socket.on("welcome", (msg) => console.log("From server => ", msg));
     socket.on("streamstatus", (status) => checkStreamStatus(status));
   }, []);
@@ -58,7 +59,7 @@ function App() {
 
   useEffect(() => {
     if (flagCredentials === false) {
-      var videoUrl = `wss://${ffmpegIP}:6789/stream`;
+      var videoUrl = `wss://${APP_IP}:6789/stream`;
       var player = new JSMpeg.VideoElement("#video-canvas", videoUrl, {
         autoplay: true,
       });
@@ -74,8 +75,6 @@ function App() {
   var flagD = false;
   var flagQ = false;
   var flagE = false;
-  var flagSL = false;
-  var flagSpace = false;
 
   useEffect(() => {
     document.addEventListener("keydown", (e) => {
@@ -98,17 +97,11 @@ function App() {
       } else if (e.code === "KeyQ" && flagQ === false) {
         console.log("Q");
         flagQ = true;
-        socket.emit("command", "zoominspeed");
+        socket.emit("command", "zoomoutspeed");
       } else if (e.code === "KeyE" && flagE === false) {
         console.log("E");
         flagE = true;
-        socket.emit("command", "zoomoutspeed");
-      } else if (e.code === "Space" && flagSpace === false) {
-        console.log("Space");
-        flagE = true;
-      } else if (e.code === "ShiftLeft" && flagSL === false) {
-        console.log("ShiftLeft");
-        flagE = true;
+        socket.emit("command", "zoominspeed");
       }
     });
 
@@ -126,7 +119,7 @@ function App() {
         flagA = false;
         socket.emit("command", "stopspeed");
       } else if (e.code === "KeyD") {
-        console.log("No D");
+        //console.log("No D");
         flagD = false;
         socket.emit("command", "stopspeed");
       } else if (e.code === "KeyQ") {
@@ -137,12 +130,6 @@ function App() {
         // console.log("No E");
         flagE = false;
         socket.emit("command", "stopzoomspeed");
-      } else if (e.code === "Space") {
-        console.log("No Space");
-        flagSpace = false;
-      } else if (e.code === "ShiftLeft") {
-        // console.log("No ShiftLeft");
-        flagSL = false;
       }
     });
   }, []);
@@ -213,8 +200,10 @@ function App() {
     <>
       <div className="App">
         <HeaderNav />
-        {flagCredentials ? (
-          <Credentials onClick={handleSubmit} />
+        {flagCredentials ? (<>
+         {/* <Credentials onClick={handleSubmit} /> */}
+         
+         </>
         ) : (
           <>
             <DraggableVideo endpoint={ENDPOINT} socket={socket} />
@@ -224,26 +213,27 @@ function App() {
                 style={{ width: "155px" }}
                 onClick={(e) => restartStream(e)}
               >
-                Restart Streaming
+                Restart streaming
               </Button>
             </div>
-            <div className="d-flex justify-content-around mt-2 w-100">
+            {/* <div className="d-flex justify-content-around mt-2 w-100">
               <Button
                 style={{ width: "155px" }}
                 onClick={(e) => editCredentials(e)}
               >
                 Edit Camera
               </Button>
-            </div>
+            </div> */}
             {/* <GobeJoystickController
               opacity={0.75}
               move={handleMove}
               stop={handleStop}
               start={handleStart}
             /> */}
+            {/* <ControlButtons onClick={handleButton} /> */}
           </>
         )}
-        <>{/* <ControlButtons onClick={handleButton} /> */}</>
+        
       </div>
     </>
   );
