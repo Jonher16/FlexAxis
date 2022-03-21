@@ -230,7 +230,9 @@ function App() {
               stop={handleStop}
               start={handleStart}
             /> */}
-            {/* <ControlButtons onClick={handleButton} /> */}
+            {/* <div className="w-100 d-flex flex-row justify-content-center">
+            <ControlButtons onClick={handleButton} />
+            </div> */}
           </>
         )}
         
