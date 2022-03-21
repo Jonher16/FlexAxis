@@ -109,13 +109,13 @@ webSocketServer.broadcast = function (data) {
 const zoomstep = 50;
 const angle = 20;
 const speed = 10;
-const ip = "212.170.116.46"; //Set to "" in credential mode
+const ip = "172.20.85.127"; //Set to "" in credential mode
 const username = "root"; //Set to "" in credential mode
-const password = "pass"; //Set to "" in credential mode
+const password = "Nuuk2022"; //Set to "" in credential mode
 
 //COMMENT FOR CREDENTIAL CHECK START
 
-axis = new Axis("212.170.116.46", "root", "pass", { camera: "1" });
+axis = new Axis("172.20.85.127", "root", "Nuuk2022", { camera: "1" });
 flag_stream = true;
 setTimeout(function () {
   var args = [
