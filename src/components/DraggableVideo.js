@@ -38,7 +38,7 @@ export default class DraggableVideo extends Component {
       } else if (e.pageX == oldx && e.pageY > oldy) {
         if (
           flag_move === false 
-          || (flag_move === true && lastDirection !== "down")
+          // || (flag_move === true && lastDirection !== "down")
         ) {
           flag_move = true;
           direction = "down";
@@ -48,7 +48,7 @@ export default class DraggableVideo extends Component {
       } else if (e.pageX == oldx && e.pageY < oldy) {
         if (
           flag_move === false
-          || (flag_move === true && lastDirection !== "up")
+          // || (flag_move === true && lastDirection !== "up")
         ) {
           flag_move = true;
           direction = "up";
@@ -58,7 +58,7 @@ export default class DraggableVideo extends Component {
       } else if (e.pageX < oldx && e.pageY == oldy) {
         if (
           flag_move === false
-          || (flag_move === true && lastDirection !== "left")
+          // || (flag_move === true && lastDirection !== "left")
         ) {
           flag_move = true;
           direction = "left";
