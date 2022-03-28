@@ -6,7 +6,7 @@ import HeaderNav from "./components/HeaderNav";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import { Form } from "react-bootstrap";
+import { Form, OverlayTrigger, Popover } from "react-bootstrap";
 import JSMpeg from "@cycjimmy/jsmpeg-player";
 import GobeJoystickController from "./components/GobeJoystickController";
 import $ from "jquery";
@@ -196,6 +196,21 @@ function App() {
     console.log(e);
   };
 
+  const popover = (
+    <Popover id="popover-basic">
+      <Popover.Header as="h1">Camera control</Popover.Header>
+      <Popover.Body>
+        Click on the camera canvas and <strong>drag</strong> in any direction to start panning the image.
+        Instead, you can use WASD to pan the video with the keyboard.
+        <h6>W: up
+        A: left
+        S: right
+        D: down</h6>
+        
+      </Popover.Body>
+    </Popover>
+  );
+
   return (
     <>
       <div className="App">
@@ -207,7 +222,6 @@ function App() {
         ) : (
           <>
             <DraggableVideo endpoint={ENDPOINT} socket={socket} />
-          
             <div className="d-flex justify-content-around mt-2 w-100">
               <Button
                 style={{ width: "155px" }}
@@ -216,6 +230,16 @@ function App() {
                 Restart streaming
               </Button>
             </div>
+            <div className="d-flex justify-content-around mt-2 w-100">
+            <OverlayTrigger trigger="click" placement="right" overlay={popover}>
+              <Button
+                style={{ width: "155px" }}
+              >
+                Help
+              </Button>
+              </OverlayTrigger>
+            </div>
+            
             {/* <div className="d-flex justify-content-around mt-2 w-100">
               <Button
                 style={{ width: "155px" }}
