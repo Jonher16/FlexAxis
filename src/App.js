@@ -13,6 +13,8 @@ import $ from "jquery";
 import DraggableVideo from "./components/DraggableVideo";
 import ControlButtons from "./components/ControlButtons";
 import Credentials from "./components/Credentials"
+import "../node_modules/video-react/dist/video-react.css";
+import ReactPlayer from 'react-player'
 
 const APP_IP = process.env.REACT_APP_APP_IP;
 const ENDPOINT = `https://${APP_IP}:4001`;
@@ -214,7 +216,11 @@ function App() {
   return (
     <>
       <div className="App">
+        
         <HeaderNav />
+        
+        {/* <iframe className="border" frameborder="0" scrolling="no" id="scaled-frame" width="100%"src="https://172.20.85.127/axis-cgi/mjpg/video.cgi?camera=1"></iframe> */}
+   
         {flagCredentials ? (<>
          {/* <Credentials onClick={handleSubmit} /> */}
          
