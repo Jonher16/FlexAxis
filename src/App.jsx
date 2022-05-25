@@ -17,7 +17,8 @@ import "../node_modules/video-react/dist/video-react.css";
 import ReactPlayer from 'react-player'
 
 const APP_IP = process.env.REACT_APP_APP_IP;
-const ENDPOINT = `https://${APP_IP}:4001`;
+const APP_PORT = process.env.REACT_APP_APP_PORT;
+const ENDPOINT = `https://${APP_IP}:${APP_PORT}`;
 const socket = io(ENDPOINT);
 console.log("APP IP",APP_IP)
 function App() {
@@ -220,7 +221,8 @@ function App() {
         <HeaderNav />
         
         {/* <iframe className="border" frameborder="0" scrolling="no" id="scaled-frame" width="100%"src="https://172.20.85.127/axis-cgi/mjpg/video.cgi?camera=1"></iframe> */}
-   
+        {/* This iframe above is a test for including the video using HTTPS protocol instead of RTSP */}
+
         {flagCredentials ? (<>
          {/* <Credentials onClick={handleSubmit} /> */}
          
@@ -237,7 +239,7 @@ function App() {
               </Button>
             </div>
             <div className="d-flex justify-content-around mt-2 w-100">
-            <OverlayTrigger trigger="click" placement="right" overlay={popover}>
+            <OverlayTrigger trigger="click" placement="right" overlay={popover}> 
               <Button
                 style={{ width: "155px" }}
               >
